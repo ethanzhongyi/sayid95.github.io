@@ -82,7 +82,7 @@
 <meta name="description" content="背景介绍： 我们mt8167项目用到了2颗充电ic，分别是 HL 7026 和 ETA 6095 ， HL 7026 ：可以用mtk公版BQ 24296 的代码，而且是i2c通讯方式，而ETA 6095没有i2c，只是硬件去控制 I/O； ETA 6095：通过硬件去控制I/O，没有i2c。   首先在defconfig中去配置 ： CONFIG_MTK_SWCHR_SUPPORT， CONFI">
 <meta name="keywords" content="otg  mt8167  android7.0 liunx4.4">
 <meta property="og:type" content="article">
-<meta property="og:title" content="otg-issue">
+<meta property="og:title" content="otg-功能实现">
 <meta property="og:url" content="http://yoursite.com/2017/11/02/otg-issue/index.html">
 <meta property="og:site_name" content="Sayid">
 <meta property="og:description" content="背景介绍： 我们mt8167项目用到了2颗充电ic，分别是 HL 7026 和 ETA 6095 ， HL 7026 ：可以用mtk公版BQ 24296 的代码，而且是i2c通讯方式，而ETA 6095没有i2c，只是硬件去控制 I/O； ETA 6095：通过硬件去控制I/O，没有i2c。   首先在defconfig中去配置 ： CONFIG_MTK_SWCHR_SUPPORT， CONFI">
@@ -90,7 +90,7 @@
 <meta property="og:image" content="http://oyrqypi8q.bkt.clouddn.com/17-11-20/93013456.jpg">
 <meta property="og:updated_time" content="2017-11-20T07:21:32.504Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="otg-issue">
+<meta name="twitter:title" content="otg-功能实现">
 <meta name="twitter:description" content="背景介绍： 我们mt8167项目用到了2颗充电ic，分别是 HL 7026 和 ETA 6095 ， HL 7026 ：可以用mtk公版BQ 24296 的代码，而且是i2c通讯方式，而ETA 6095没有i2c，只是硬件去控制 I/O； ETA 6095：通过硬件去控制I/O，没有i2c。   首先在defconfig中去配置 ： CONFIG_MTK_SWCHR_SUPPORT， CONFI">
 <meta name="twitter:image" content="http://oyrqypi8q.bkt.clouddn.com/17-11-20/93013456.jpg">
 
@@ -128,7 +128,7 @@
 
 
 
-  <title>otg-issue | Sayid</title>
+  <title>otg-功能实现 | Sayid</title>
   
 
 
@@ -292,7 +292,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">otg-issue</h1>
+          <h1 class="post-title" itemprop="name headline">otg-功能实现</h1>
         
 
         <div class="post-meta">
@@ -322,7 +322,7 @@
 
           
           
-             <span id="/2017/11/02/otg-issue/" class="leancloud_visitors" data-flag-title="otg-issue">
+             <span id="/2017/11/02/otg-issue/" class="leancloud_visitors" data-flag-title="otg-功能实现">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -364,8 +364,9 @@
 <p><em>CONFIG_MTK_SWCHR_SUPPORT</em>，</p>
 <p><em>CONFIG_MTK_SWCHR_SUPPORT</em>，</p>
 <p><em>CONFIG_MTK_BQ24296_SUPPORT</em></p>
-<p>修改 \kernel-4.4\drivers\power\mediatek 下的Makefile 打开switch_charging.c<br>打开开关充电才能进行电流控制(cc  cv阶段大小电流充电)</p>
+<p><strong>然后</strong>修改 \kernel-4.4\drivers\power\mediatek 下的Makefile 打开switch_charging.c<br>打开开关充电才能进行电流控制(cc  cv阶段大小电流充电)</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ifeq ($(CONFIG_MTK_SWCHR_SUPPORT),y)</div><div class="line">		obj-$(CONFIG_MTK_SWCHR_SUPPORT) += switch_charging.o</div></pre></td></tr></table></figure>
+<p>接下来就是一些功能的现实：</p>
 <p><strong>最初的需求是：</strong></p>
 <p>不用 BQ 的 OTG 功能，所以我们要去屏蔽 BQ 的 otg，我们在 </p>
 <p>kernel-4.4\drivers\misc\mediatek\usb20\mt8167\usb20_host.c文件中把 OTG_BOOST_BY_SWITCH_CHARGER 相关的宏定义全部取反定义（比如 #ifndef 改为 #ifdefine ），</p>
