@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="adb gpio mtk," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="转载请注明出处        https://sayid95.github.io/  用 ADB 操作 GPIO 背景介绍：mt8167  安卓7.0    我们经常会在底层驱动里面去操作gpio，进而去控制硬件。如果驱动层面去操作io出现问题的时候，我们不知道是不是硬件的问题，今天就来说下怎么用ADB去控制gpio。 首先打开很难用的 Windows 的cmd.exe  (推荐 一款替代品 C">
+<meta name="keywords" content="adb gpio mtk">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ADB控制GPIO">
+<meta property="og:url" content="http://yoursite.com/2017/11/11/用ADB控制GPIO/index.html">
+<meta property="og:site_name" content="意 中 人">
+<meta property="og:description" content="转载请注明出处        https://sayid95.github.io/  用 ADB 操作 GPIO 背景介绍：mt8167  安卓7.0    我们经常会在底层驱动里面去操作gpio，进而去控制硬件。如果驱动层面去操作io出现问题的时候，我们不知道是不是硬件的问题，今天就来说下怎么用ADB去控制gpio。 首先打开很难用的 Windows 的cmd.exe  (推荐 一款替代品 C">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-11-21T04:02:11.113Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ADB控制GPIO">
+<meta name="twitter:description" content="转载请注明出处        https://sayid95.github.io/  用 ADB 操作 GPIO 背景介绍：mt8167  安卓7.0    我们经常会在底层驱动里面去操作gpio，进而去控制硬件。如果驱动层面去操作io出现问题的时候，我们不知道是不是硬件的问题，今天就来说下怎么用ADB去控制gpio。 首先打开很难用的 Windows 的cmd.exe  (推荐 一款替代品 C">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":8,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/11/11/用ADB控制GPIO/"/>
+
+
+
+
+
+  <title>ADB控制GPIO | 意 中 人</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?0e894ef53d332ac7deecafbd9f16886e";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">意 中 人</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/11/用ADB控制GPIO/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Sayid Zhong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="意 中 人">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ADB控制GPIO</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-11T11:58:09+08:00">
+                2017-11-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/11/11/用ADB控制GPIO/" class="leancloud_visitors" data-flag-title="ADB控制GPIO">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>转载请注明出处        <a href="https://sayid95.github.io/" target="_blank" rel="external">https://sayid95.github.io/</a></p>
+</blockquote>
+<h2 id="用-ADB-操作-GPIO"><a href="#用-ADB-操作-GPIO" class="headerlink" title="用 ADB 操作 GPIO"></a>用 ADB 操作 GPIO</h2><blockquote>
+<p>背景介绍：mt8167  安卓7.0  </p>
+</blockquote>
+<p>我们经常会在底层驱动里面去操作gpio，进而去控制硬件。如果驱动层面去操作io出现问题的时候，我们不知道是不是硬件的问题，今天就来说下怎么用ADB去控制gpio。</p>
+<h2 id="首先"><a href="#首先" class="headerlink" title="首先"></a>首先</h2><p>打开很难用的 Windows 的cmd.exe  (推荐 一款替代品 Cmder   )，adb shell连接上设备以后，输入下面的命令，</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cd /sys/devices/platform/soc/<span class="number">1000b</span>000.pinctrl/</div></pre></td></tr></table></figure>
+<p>进入到1000b000.pinctrl/  的目录下，然后就可以去操作 io 口了，如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">echo mode <span class="number">66</span> <span class="number">0</span> &gt; mt_gpio   <span class="comment">/*设置66号 io 的模式*/</span></div><div class="line">echo dir <span class="number">66</span> <span class="number">1</span> &gt; mt_gpio    <span class="comment">/*设置66号 io 的输入，输出方向*/</span></div><div class="line">echo out <span class="number">66</span> <span class="number">1</span> &gt; mt_gpio    <span class="comment">/*设置66号 io 为输出*/</span></div></pre></td></tr></table></figure>
+<h2 id="接着"><a href="#接着" class="headerlink" title="接着"></a>接着</h2><p>就可以用下面的命令去看我们上面用 ADB 设置的 gpio 状态了</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cat   /sys/devices/platform/soc/<span class="number">1000b</span>000.pinctrl/mt_gpio</div></pre></td></tr></table></figure>
+<h2 id="来看下mtk-这部分操作的源码"><a href="#来看下mtk-这部分操作的源码" class="headerlink" title="来看下mtk 这部分操作的源码"></a>来看下mtk 这部分操作的源码</h2><p>在 <em>kernel-4.4/drivers/pinctrl/mediatek/pinctrl-mtk-common.c</em> 这个文件里，下面代码就是adb 直接操作gpio的函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> ssize_t <span class="title">mt_gpio_show_pin</span><span class="params">(struct device *dev, struct device_attribute *attr, <span class="keyword">char</span> *buf)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="keyword">int</span> len = <span class="number">0</span>;</div><div class="line">	<span class="keyword">int</span> bufLen = PAGE_SIZE;</div><div class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">mtk_pinctrl</span> *<span class="title">pctl</span> = <span class="title">dev_get_drvdata</span>(<span class="title">dev</span>);</span></div><div class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">gpio_chip</span> *<span class="title">chip</span> = <span class="title">pctl</span>-&gt;<span class="title">chip</span>;</span></div><div class="line">	<span class="keyword">unsigned</span>		i;</div><div class="line">	<span class="keyword">int</span>			pull_val;</div><div class="line"></div><div class="line">	len += <span class="built_in">snprintf</span>(buf+len, bufLen-len,</div><div class="line">		<span class="string">"PIN: [MODE] [DIR] [DOUT] [DIN] [PULL_EN] [PULL_SEL] [IES] [SMT] [DRIVE] ( [R1] [R0] )\n"</span>);</div><div class="line"></div><div class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; chip-&gt;ngpio; i++) &#123;</div><div class="line">		pull_val = mtk_pullsel_get(chip, i);</div><div class="line"></div><div class="line">		len += <span class="built_in">snprintf</span>(buf+len, bufLen-len, <span class="string">"%4d:% d% d% d% d% d% d% d% d% d"</span>,</div><div class="line">				i,</div><div class="line">				mtk_pinmux_get(chip, i),</div><div class="line">				mtk_gpio_get_direction(chip, i),</div><div class="line">				mtk_gpio_get_out(chip, i),</div><div class="line">				mtk_gpio_get_in(chip, i),</div><div class="line">				mtk_pullen_get(chip, i),</div><div class="line">				(pull_val &gt;= <span class="number">0</span>) ? (pull_val&amp;<span class="number">1</span>) : <span class="number">-1</span>,</div><div class="line">				mtk_ies_get(chip, i),</div><div class="line">				mtk_smt_get(chip, i),</div><div class="line">				mtk_driving_get(chip, i));</div><div class="line">		<span class="keyword">if</span> ((pull_val &amp; <span class="number">8</span>) &amp;&amp; (pull_val &gt;= <span class="number">0</span>))</div><div class="line">			len += <span class="built_in">snprintf</span>(buf+len, bufLen-len, <span class="string">" %d %d"</span>, !!(pull_val&amp;<span class="number">4</span>), !!(pull_val&amp;<span class="number">2</span>));</div><div class="line">		len += <span class="built_in">snprintf</span>(buf+len, bufLen-len, <span class="string">"\n"</span>);</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> len;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> ssize_t <span class="title">mt_gpio_store_pin</span><span class="params">(struct device *dev, struct device_attribute *attr, <span class="keyword">const</span> <span class="keyword">char</span> *buf, <span class="keyword">size_t</span> count)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="keyword">int</span> pin, val;</div><div class="line">	<span class="keyword">int</span> val_set;</div><div class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">mtk_pinctrl</span> *<span class="title">pctl</span> = <span class="title">dev_get_drvdata</span>(<span class="title">dev</span>);</span></div><div class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">pinctrl_dev</span> *<span class="title">pctldev</span> = <span class="title">pctl</span>-&gt;<span class="title">pctl_dev</span>;</span></div><div class="line"></div><div class="line">	<span class="keyword">if</span> (!<span class="built_in">strncmp</span>(buf, <span class="string">"mode"</span>, <span class="number">4</span>) &amp;&amp; (<span class="built_in">sscanf</span>(buf+<span class="number">4</span>, <span class="string">"%d %d"</span>, &amp;pin, &amp;val) == <span class="number">2</span>)) &#123;</div><div class="line">		val_set = mtk_pmx_set_mode(pctldev, pin, val);</div><div class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!<span class="built_in">strncmp</span>(buf, <span class="string">"dir"</span>, <span class="number">3</span>) &amp;&amp; (<span class="built_in">sscanf</span>(buf+<span class="number">3</span>, <span class="string">"%d %d"</span>, &amp;pin, &amp;val) == <span class="number">2</span>)) &#123;</div><div class="line">		val_set  = mtk_pmx_gpio_set_direction(pctldev, <span class="literal">NULL</span>, pin, !val);</div><div class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!<span class="built_in">strncmp</span>(buf, <span class="string">"out"</span>, <span class="number">3</span>) &amp;&amp; (<span class="built_in">sscanf</span>(buf+<span class="number">3</span>, <span class="string">"%d %d"</span>, &amp;pin, &amp;val) == <span class="number">2</span>)) &#123;</div><div class="line">		mtk_pmx_gpio_set_direction(pctldev, <span class="literal">NULL</span>, pin, <span class="literal">false</span>);</div><div class="line">		mtk_gpio_set(pctl-&gt;chip, pin, val);</div><div class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!<span class="built_in">strncmp</span>(buf, <span class="string">"pullen"</span>, <span class="number">6</span>) &amp;&amp; (<span class="built_in">sscanf</span>(buf+<span class="number">6</span>, <span class="string">"%d %d"</span>, &amp;pin, &amp;val) == <span class="number">2</span>)) &#123;</div><div class="line">		val_set = mtk_pconf_set_pull_select(pctl, pin, !!val,</div><div class="line">			<span class="literal">false</span>, MTK_PUPD_SET_R1R0_00 + val);</div><div class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!<span class="built_in">strncmp</span>(buf, <span class="string">"pullsel"</span>, <span class="number">7</span>) &amp;&amp; (<span class="built_in">sscanf</span>(buf+<span class="number">7</span>, <span class="string">"%d %d"</span>, &amp;pin, &amp;val) == <span class="number">2</span>)) &#123;</div><div class="line">		val_set = mtk_pconf_set_pull_select(pctl, pin, <span class="literal">true</span>, !!val, MTK_PUPD_SET_R1R0_01);</div><div class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!<span class="built_in">strncmp</span>(buf, <span class="string">"ies"</span>, <span class="number">3</span>) &amp;&amp; (<span class="built_in">sscanf</span>(buf+<span class="number">3</span>, <span class="string">"%d %d"</span>, &amp;pin, &amp;val) == <span class="number">2</span>)) &#123;</div><div class="line">		val_set = mtk_pconf_set_ies_smt(pctl, pin, val, PIN_CONFIG_INPUT_ENABLE);</div><div class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!<span class="built_in">strncmp</span>(buf, <span class="string">"smt"</span>, <span class="number">3</span>) &amp;&amp; (<span class="built_in">sscanf</span>(buf+<span class="number">3</span>, <span class="string">"%d %d"</span>, &amp;pin, &amp;val) == <span class="number">2</span>)) &#123;</div><div class="line">		val_set = mtk_pconf_set_ies_smt(pctl, pin, val, PIN_CONFIG_INPUT_SCHMITT_ENABLE);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">return</span> count;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="title">DEVICE_ATTR</span><span class="params">(mt_gpio, <span class="number">0664</span>, mt_gpio_show_pin, mt_gpio_store_pin)</span></span>;</div><div class="line"></div><div class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">device_attribute</span> *<span class="title">gpio_attr_list</span>[] = &#123;</span></div><div class="line">	&amp;dev_attr_mt_gpio,</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">mt_gpio_create_attr</span><span class="params">(struct device *dev)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="keyword">int</span> idx, err = <span class="number">0</span>;</div><div class="line">	<span class="keyword">int</span> num = (<span class="keyword">int</span>)(ARRAY_SIZE(gpio_attr_list));</div><div class="line"></div><div class="line">	<span class="keyword">if</span> (!dev)</div><div class="line">		<span class="keyword">return</span> -EINVAL;</div><div class="line"></div><div class="line">	<span class="keyword">for</span> (idx = <span class="number">0</span>; idx &lt; num; idx++) &#123;</div><div class="line">		err = device_create_file(dev, gpio_attr_list[idx]);</div><div class="line">		<span class="keyword">if</span> (err)</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">return</span> err;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>看到源码  <em>static DEVICE_ATTR(mt_gpio, 0664, mt_gpio_show_pin, mt_gpio_store_pin);</em>，我们就知道其实就是利用 device_create_file 函数可以在  /sys/ 下创建对应的属性文件，从而通过对该文件的读写实现特定的数据操作。</p>
+<p>可能不同的内核对应的节点不一样，这个例子是在 Linux 4.4下进行的，现在就去试试吧！</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div></div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="http://oyrqypi8q.bkt.clouddn.com/17-11-2/78367525.jpg" alt="Sayid Zhong 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/adb-gpio-mtk/" rel="tag"># adb gpio mtk</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/02/OTG功能实现/" rel="next" title="otg-功能实现">
+                <i class="fa fa-chevron-left"></i> otg-功能实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/21/聊聊设备节点/" rel="prev" title="聊聊设备节点">
+                聊聊设备节点 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.png"
+                alt="Sayid Zhong" />
+            
+              <p class="site-author-name" itemprop="name">Sayid Zhong</p>
+              <p class="site-description motion-element" itemprop="description">种一棵树最好的时间是10年前，其次就是现在！</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/sayid95/sayid95.github.io/tree/master" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:sayidzhong@126.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#用-ADB-操作-GPIO"><span class="nav-number">1.</span> <span class="nav-text">用 ADB 操作 GPIO</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#首先"><span class="nav-number">2.</span> <span class="nav-text">首先</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#接着"><span class="nav-number">3.</span> <span class="nav-text">接着</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#来看下mtk-这部分操作的源码"><span class="nav-number">4.</span> <span class="nav-text">来看下mtk 这部分操作的源码</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sayid Zhong</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("N97497H4j6R56nlJncf5FwhR-gzGzoHsz", "nLbujo7IXdpCxneyoAG2nMJm");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+  
+
+  
+
+  
+  <script type="text/javascript" src="/js/src/js.cookie.js?v=5.1.3"></script>
+  <script type="text/javascript" src="/js/src/scroll-cookie.js?v=5.1.3"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/exturl.js?v=5.1.3"></script>
+
+
+</body>
+</html>
