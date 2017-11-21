@@ -83,7 +83,7 @@
 <meta name="keywords" content="device_create_file  user_space">
 <meta property="og:type" content="article">
 <meta property="og:title" content="dev-node">
-<meta property="og:url" content="http://yoursite.com/2017/11/20/dev-node/index.html">
+<meta property="og:url" content="http://yoursite.com/2017/11/20/设备节点 /index.html">
 <meta property="og:site_name" content="Sayid Zhong">
 <meta property="og:description" content="设备节点  转载请注明出处        https://sayid95.github.io/   聊聊怎么通过 安卓用户空间  去和之间进行 内核沟通  我们通过一个例子去解释，设备节点的作用： 在user_space中去读取一个gpio(上拉 输入)的状态  1  创建文件节点  12345678910111213141516171819202122232425262728293031stat">
 <meta property="og:locale" content="zh-Hans">
@@ -120,7 +120,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/11/20/dev-node/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/11/20/设备节点 /"/>
 
 
 
@@ -273,7 +273,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/20/dev-node/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/20/设备节点 /">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="sayidzhong@126.com">
@@ -320,7 +320,7 @@
 
           
           
-             <span id="/2017/11/20/dev-node/" class="leancloud_visitors" data-flag-title="dev-node">
+             <span id="/2017/11/20/设备节点 /" class="leancloud_visitors" data-flag-title="dev-node">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -367,9 +367,12 @@
 <li>2   将gpio配置成上拉输入状态</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">battery_probe</span><span class="params">(struct platform_device *dev)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">device_node</span> *<span class="title">np</span>;</span></div><div class="line">    np = of_find_compatible_node(<span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="string">"mediatek,battery"</span>);</div><div class="line">    GPIO_AD20=of_get_named_gpio(np, <span class="string">"test"</span>, <span class="number">0</span>);</div><div class="line">    <span class="keyword">if</span> (!np) &#123;</div><div class="line">        printk( <span class="string">"[zy----]Failed to find device-tree node: ad20\n"</span>);</div><div class="line">        <span class="keyword">return</span> -ENODEV;</div><div class="line">    &#125;</div><div class="line">    gpio_direction_input(GPIO_test);</div><div class="line">    value_GPIO_test = gpio_get_value(GPIO_test);</div><div class="line"></div><div class="line"></div><div class="line">ret_device_file = device_create_file(&amp;(dev-&gt;dev), &amp;dev_attr_value_GPIO_test);</div><div class="line">  </div><div class="line">  <span class="comment">/*调用函数device_create_file来传递 sys fs 中的文件</span></div><div class="line"><span class="comment"></span></div><div class="line"><span class="comment">  *DEVICE_ATTR的功能就是定义一个device_attribute结构体对象。</span></div><div class="line"><span class="comment">  *device_create_file利用该对象在device下创建文件。</span></div><div class="line"><span class="comment">  */</span></div></pre></td></tr></table></figure>
+<ul>
+<li>3  下面是函数原型，可<a href="http://elixir.free-electrons.com/linux/v4.13.8/source/drivers/base/core.c#L1151" target="_blank" rel="external">参考源码</a></li>
+</ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * device_create_file - create sysfs attribute file for device.</span></div><div class="line"><span class="comment"> * @dev: device.</span></div><div class="line"><span class="comment"> * @attr: device attribute descriptor.</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">device_create_file</span><span class="params">(struct device *dev,</span></span></div><div class="line"><span class="function"><span class="params">         <span class="keyword">const</span> struct device_attribute *attr)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line"> <span class="keyword">int</span> error = <span class="number">0</span>;</div><div class="line"> <span class="keyword">if</span> (dev)</div><div class="line">  error = sysfs_create_file(&amp;dev-&gt;kobj, &amp;attr-&gt;attr);</div><div class="line"> <span class="keyword">return</span> error;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <ul>
-<li>3 读取节点文件</li>
+<li>4  读取节点文件</li>
 </ul>
 <p>最后我们可以在上层去读取这个io的状态了</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> test  = get_int_value(value_GPIO_test_PATH);<span class="comment">//get方法在下面</span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> value_GPIO_test_PATH  <span class="meta-string">"/sys/devices/platform/battery/value_GPIO_test"</span></span></div><div class="line"></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">read_from_file</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* path, <span class="keyword">char</span>* buf, <span class="keyword">int</span> size)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">    <span class="keyword">if</span> (!path) &#123;    </div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">int</span> fd = open(path, O_RDONLY);</div><div class="line">    <span class="keyword">if</span> (fd == <span class="number">-1</span>) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">int</span> count = read(fd, buf, size);</div><div class="line">    <span class="keyword">if</span> (count &gt; <span class="number">0</span>) &#123;</div><div class="line">        count = (count &lt; size) ? count : size - <span class="number">1</span>;</div><div class="line">        <span class="keyword">while</span> (count &gt; <span class="number">0</span> &amp;&amp; buf[count<span class="number">-1</span>] == <span class="string">'\n'</span>) count--;</div><div class="line">        buf[count] = <span class="string">'\0'</span>;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        buf[<span class="number">0</span>] = <span class="string">'\0'</span>;</div><div class="line">    &#125;</div><div class="line">    close(fd);</div><div class="line">    <span class="keyword">return</span> count;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">get_int_value</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> * path)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">        <span class="keyword">int</span> size = <span class="number">32</span>;</div><div class="line">    <span class="keyword">char</span> buf[size];</div><div class="line">    <span class="keyword">if</span>(!read_from_file(path, buf, size))</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    <span class="keyword">return</span> atoi(buf);</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
@@ -427,7 +430,7 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/11/20/设备节点/" rel="next" title="dev-node">
+              <a href="/2017/11/20/设备节点-bak/" rel="next" title="dev-node">
                 <i class="fa fa-chevron-left"></i> dev-node
               </a>
             
