@@ -79,16 +79,24 @@
 
 
 
-<meta name="description" content="种一棵树最好的时间是10年前，其次就是现在！">
-<meta property="og:type" content="website">
-<meta property="og:title" content="意 中 人">
-<meta property="og:url" content="http://yoursite.com/archives/2017/index.html">
+<meta name="description" content="流程module_init → i2c 注册 → 驱动注册 → 驱动初始化 → 设备的注册→ 上电(硬件初始化) → 固件下载(软件初始化) → 中断申请 → 结束 TP 无触摸分析： TP 无触摸的现象： 主要变现为触摸 TP 无反应，或者一部分区域无反应。  ​  TP 无触摸的分类 由于触摸 TP 无反应有很多原因，有可能是没有中断，也有可能是有中断但 是不能准确触摸，所以 TP 无反应主要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="I2c设备-tp驱动分析（二）">
+<meta property="og:url" content="http://yoursite.com/2017/11/25/I2c设备-tp驱动分析二/index.html">
 <meta property="og:site_name" content="意 中 人">
-<meta property="og:description" content="种一棵树最好的时间是10年前，其次就是现在！">
+<meta property="og:description" content="流程module_init → i2c 注册 → 驱动注册 → 驱动初始化 → 设备的注册→ 上电(硬件初始化) → 固件下载(软件初始化) → 中断申请 → 结束 TP 无触摸分析： TP 无触摸的现象： 主要变现为触摸 TP 无反应，或者一部分区域无反应。  ​  TP 无触摸的分类 由于触摸 TP 无反应有很多原因，有可能是没有中断，也有可能是有中断但 是不能准确触摸，所以 TP 无反应主要">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://oyrqypi8q.bkt.clouddn.com/17-11-25/8552954.jpg">
+<meta property="og:image" content="http://oyrqypi8q.bkt.clouddn.com/17-11-25/11142974.jpg">
+<meta property="og:image" content="http://oyrqypi8q.bkt.clouddn.com/17-11-25/43251264.jpg">
+<meta property="og:image" content="http://oyrqypi8q.bkt.clouddn.com/17-11-25/38609276.jpg">
+<meta property="og:image" content="http://oyrqypi8q.bkt.clouddn.com/17-11-25/31129126.jpg">
+<meta property="og:image" content="http://oyrqypi8q.bkt.clouddn.com/17-11-25/10431813.jpg">
+<meta property="og:updated_time" content="2017-11-25T08:12:35.039Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="意 中 人">
-<meta name="twitter:description" content="种一棵树最好的时间是10年前，其次就是现在！">
+<meta name="twitter:title" content="I2c设备-tp驱动分析（二）">
+<meta name="twitter:description" content="流程module_init → i2c 注册 → 驱动注册 → 驱动初始化 → 设备的注册→ 上电(硬件初始化) → 固件下载(软件初始化) → 中断申请 → 结束 TP 无触摸分析： TP 无触摸的现象： 主要变现为触摸 TP 无反应，或者一部分区域无反应。  ​  TP 无触摸的分类 由于触摸 TP 无反应有很多原因，有可能是没有中断，也有可能是有中断但 是不能准确触摸，所以 TP 无反应主要">
+<meta name="twitter:image" content="http://oyrqypi8q.bkt.clouddn.com/17-11-25/8552954.jpg">
 
 
 
@@ -118,13 +126,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/archives/2017/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/11/25/I2c设备-tp驱动分析二/"/>
 
 
 
 
 
-  <title>归档 | 意 中 人</title>
+  <title>I2c设备-tp驱动分析（二） | 意 中 人</title>
   
 
 
@@ -153,7 +161,7 @@
     
   
 
-  <div class="container sidebar-position-left page-archive">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -257,407 +265,218 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-      <span class="archive-page-counter">
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/25/I2c设备-tp驱动分析二/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Sayid Zhong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="意 中 人">
+    </span>
+
+    
+      <header class="post-header">
+
         
         
+          <h1 class="post-title" itemprop="name headline">I2c设备-tp驱动分析（二）</h1>
         
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-25T16:12:34+08:00">
+                2017-11-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
           
-        
-        嗯..! 目前共计 10 篇日志。 继续努力。
-      </span>
 
-      
-
-        
-        
-        
-
-        
           
-          <div class="collection-title">
-            <h1 class="archive-year" id="archive-year-2017">2017</h1>
-          </div>
-        
-        
+            
+          
 
-        
+          
+          
+             <span id="/2017/11/25/I2c设备-tp驱动分析二/" class="leancloud_visitors" data-flag-title="I2c设备-tp驱动分析（二）">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+          
 
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/11/25/I2c设备-tp驱动分析二/" itemprop="url">
-              
-                <span itemprop="name">I2c设备-tp驱动分析（二）</span>
-              
-            </a>
-        
-      </h2>
+          
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-11-25T16:12:34+08:00"
-              content="2017-11-25" >
-          11-25
-        </time>
-      </div>
+          
 
-    </header>
-  </article>
+        </div>
+      </header>
+    
 
-
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/11/25/I2c设备-tp驱动分析/" itemprop="url">
-              
-                <span itemprop="name">I2c设备-tp 驱动分析（一）</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-11-25T15:31:52+08:00"
-              content="2017-11-25" >
-          11-25
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
       
 
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/11/25/房价的背后/" itemprop="url">
-              
-                <span itemprop="name">房价的背后的认知</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-11-25T14:36:17+08:00"
-              content="2017-11-25" >
-          11-25
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+      
+        <h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><p>module_init → i2c 注册 → 驱动注册 → 驱动初始化 → 设备的注册→ 上电(硬件初始化) → 固件下载(软件初始化) → 中断申请 → 结束</p>
+<h3 id="TP-无触摸分析："><a href="#TP-无触摸分析：" class="headerlink" title="TP 无触摸分析："></a>TP 无触摸分析：</h3><ol>
+<li><p>TP 无触摸的现象： 主要变现为触摸 TP 无反应，或者一部分区域无反应。 </p>
+<p>​</p>
+</li>
+<li><p>TP 无触摸的分类 由于触摸 TP 无反应有很多原因，有可能是没有中断，也有可能是有中断但 是不能准确触摸，所以 TP 无反应主要分为两种：</p>
+</li>
+</ol>
+<p>1、有中断性质；2、无中断性质；</p>
+<ol>
+<li>TP 无触摸的确认 TP 无触摸的可以通过 adb信息查看：1、adb shell cat proc/kmsg2、adb shell getevent</li>
+<li>导致没有中断的原因</li>
+</ol>
+<p>软件方面主要有三个方面的原因:</p>
+<ul>
+<li>① 中断的模式，中断引脚是否正确 —– 中断引脚一般出现问题的 概率性很大</li>
+<li>② TP 的固件是否正确 —- 即.h 有没有下载正确，主要的办法就是将 (3.0)里的数据打印出来跟正确测试 OK 的.h 对比来判断。 </li>
+</ul>
+<ul>
+<li>③ I2C 是否能正常通讯 —- 没有中断很多原因都是 i2c 不通导致，所 以优先考虑</li>
+</ul>
+<ol>
+<li>I2C 不通：如何判断驱动 i2c 是否通讯成功？</li>
+</ol>
+<ul>
+<li><p>1、硬件方面：用示波器查看波形，测试每个 GPIO 的电压。 1/每个 GPIO 的电压:VCC 电压 2.8V—-3.3V，SDA,SCL 电压 1.8V 或 2.8V，主要是指芯片的 VDDIO 的电压。RST 电压 1.8V 或者 2.8V IRQ 电压 1.8V 或者 2.8V2/ 通过示波器查看 SDA 跟 SCL 的波形</p>
+</li>
+<li><p>2、软件方面：通过读写某些的寄存器，读写的方法主要有两种： 1/ 读 0xfc 或者 0xb0 的值。 2/ 向某个寄存器写入一个数据，然后再将该地址里的数据读出来， 对比读前后两个数据是否相同。</p>
+</li>
+</ul>
+<ol>
+<li>i2c 不通：硬件方面：主要考虑每个 GPIO 的电压 通过万用表可以测试开机后 IC 每个引脚的电压，主要就是 VCC、SDA、 SCL、RST 的电压。这里重点测试 VCC 电压跟 SDA、SCL 电压是否达到要求。</li>
+</ol>
+<h3 id="软件方面："><a href="#软件方面：" class="headerlink" title="软件方面："></a>软件方面：</h3><ul>
+<li>1、检查 i2c 是否注册成功 ls   sys/bus/i2c/devices/主要是通过 adb shell 来查看，在 sys/bus/i2c/devices/下有没有 1-0040 或 者 0-0040 这个地址，并且在该目录下有我们 i2c 设备的相关信息, if no 则说明i2c 没有注册成功</li>
+<li>2、GPIO 的配置   i2c 总线的配置</li>
+</ul>
+<p><img src="http://oyrqypi8q.bkt.clouddn.com/17-11-25/8552954.jpg" alt="1"></p>
+<p><img src="http://oyrqypi8q.bkt.clouddn.com/17-11-25/11142974.jpg" alt="2"></p>
+<p><img src="http://oyrqypi8q.bkt.clouddn.com/17-11-25/43251264.jpg" alt="3"></p>
+<p><img src="http://oyrqypi8q.bkt.clouddn.com/17-11-25/38609276.jpg" alt="4"></p>
+<p><img src="http://oyrqypi8q.bkt.clouddn.com/17-11-25/31129126.jpg" alt="5"></p>
+<p><img src="http://oyrqypi8q.bkt.clouddn.com/17-11-25/10431813.jpg" alt="6"></p>
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/11/21/学习英语的一点经验/" itemprop="url">
-              
-                <span itemprop="name">学习英语的一点经验</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-11-21T09:52:39+08:00"
-              content="2017-11-21" >
-          11-21
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/11/18/一位大学生的赚钱历程/" itemprop="url">
-              
-                <span itemprop="name">一位大学生的赚钱历程</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-11-18T09:50:06+08:00"
-              content="2017-11-18" >
-          11-18
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/11/16/赚外快-头条号/" itemprop="url">
-              
-                <span itemprop="name">赚外快-头条号</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-11-16T09:44:14+08:00"
-              content="2017-11-16" >
-          11-16
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/11/13/聊聊设备节点/" itemprop="url">
-              
-                <span itemprop="name">聊聊设备节点</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-11-13T12:01:05+08:00"
-              content="2017-11-13" >
-          11-13
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/11/11/用ADB控制GPIO/" itemprop="url">
-              
-                <span itemprop="name">ADB控制GPIO</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-11-11T11:58:09+08:00"
-              content="2017-11-11" >
-          11-11
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/11/02/OTG功能实现/" itemprop="url">
-              
-                <span itemprop="name">otg-功能实现</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-11-02T15:21:32+08:00"
-              content="2017-11-02" >
-          11-02
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/09/05/hexo 踩过的坑/" itemprop="url">
-              
-                <span itemprop="name">hexo 踩过的坑</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-09-05T09:09:00+08:00"
-              content="2017-09-05" >
-          09-05
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
     </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div></div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="http://oyrqypi8q.bkt.clouddn.com/17-11-2/78367525.jpg" alt="Sayid Zhong 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/25/I2c设备-tp驱动分析/" rel="next" title="I2c设备-tp 驱动分析（一）">
+                <i class="fa fa-chevron-left"></i> I2c设备-tp 驱动分析（一）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -665,6 +484,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -685,8 +508,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -757,6 +589,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#流程"><span class="nav-number">1.</span> <span class="nav-text">流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TP-无触摸分析："><span class="nav-number">1.1.</span> <span class="nav-text">TP 无触摸分析：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#软件方面："><span class="nav-number">1.2.</span> <span class="nav-text">软件方面：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -897,6 +745,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
 
   
 
