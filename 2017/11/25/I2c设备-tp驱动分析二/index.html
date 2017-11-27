@@ -92,7 +92,7 @@
 <meta property="og:image" content="http://oyrqypi8q.bkt.clouddn.com/17-11-25/38609276.jpg">
 <meta property="og:image" content="http://oyrqypi8q.bkt.clouddn.com/17-11-25/31129126.jpg">
 <meta property="og:image" content="http://oyrqypi8q.bkt.clouddn.com/17-11-25/10431813.jpg">
-<meta property="og:updated_time" content="2017-11-25T08:12:35.039Z">
+<meta property="og:updated_time" content="2017-11-25T09:38:23.980Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="I2c设备-tp驱动分析（二）">
 <meta name="twitter:description" content="流程module_init → i2c 注册 → 驱动注册 → 驱动初始化 → 设备的注册→ 上电(硬件初始化) → 固件下载(软件初始化) → 中断申请 → 结束 TP 无触摸分析： TP 无触摸的现象： 主要变现为触摸 TP 无反应，或者一部分区域无反应。  ​  TP 无触摸的分类 由于触摸 TP 无反应有很多原因，有可能是没有中断，也有可能是有中断但 是不能准确触摸，所以 TP 无反应主要">
@@ -370,7 +370,7 @@
 <li>TP 无触摸的确认 TP 无触摸的可以通过 adb信息查看：1、adb shell cat proc/kmsg2、adb shell getevent</li>
 <li>导致没有中断的原因</li>
 </ol>
-<p>软件方面主要有三个方面的原因:</p>
+<p>软件方面的原因:</p>
 <ul>
 <li>① 中断的模式，中断引脚是否正确 —– 中断引脚一般出现问题的 概率性很大</li>
 <li>② TP 的固件是否正确 —- 即.h 有没有下载正确，主要的办法就是将 (3.0)里的数据打印出来跟正确测试 OK 的.h 对比来判断。 </li>
@@ -387,13 +387,11 @@
 <li><p>2、软件方面：通过读写某些的寄存器，读写的方法主要有两种： 1/ 读 0xfc 或者 0xb0 的值。 2/ 向某个寄存器写入一个数据，然后再将该地址里的数据读出来， 对比读前后两个数据是否相同。</p>
 </li>
 </ul>
-<ol>
-<li>i2c 不通：硬件方面：主要考虑每个 GPIO 的电压 通过万用表可以测试开机后 IC 每个引脚的电压，主要就是 VCC、SDA、 SCL、RST 的电压。这里重点测试 VCC 电压跟 SDA、SCL 电压是否达到要求。</li>
-</ol>
 <h3 id="软件方面："><a href="#软件方面：" class="headerlink" title="软件方面："></a>软件方面：</h3><ul>
 <li>1、检查 i2c 是否注册成功 ls   sys/bus/i2c/devices/主要是通过 adb shell 来查看，在 sys/bus/i2c/devices/下有没有 1-0040 或 者 0-0040 这个地址，并且在该目录下有我们 i2c 设备的相关信息, if no 则说明i2c 没有注册成功</li>
 <li>2、GPIO 的配置   i2c 总线的配置</li>
 </ul>
+<h3 id="硬件方面："><a href="#硬件方面：" class="headerlink" title="硬件方面："></a>硬件方面：</h3><p>主要考虑每个 GPIO 的电压 通过万用表可以测试开机后 IC 每个引脚的电压，主要就是 VCC、SDA、 SCL、RST 的电压。这里重点测试 VCC 电压跟 SDA、SCL 电压是否达到要求。</p>
 <p><img src="http://oyrqypi8q.bkt.clouddn.com/17-11-25/8552954.jpg" alt="1"></p>
 <p><img src="http://oyrqypi8q.bkt.clouddn.com/17-11-25/11142974.jpg" alt="2"></p>
 <p><img src="http://oyrqypi8q.bkt.clouddn.com/17-11-25/43251264.jpg" alt="3"></p>
@@ -599,7 +597,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#流程"><span class="nav-number">1.</span> <span class="nav-text">流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TP-无触摸分析："><span class="nav-number">1.1.</span> <span class="nav-text">TP 无触摸分析：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#软件方面："><span class="nav-number">1.2.</span> <span class="nav-text">软件方面：</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#流程"><span class="nav-number">1.</span> <span class="nav-text">流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TP-无触摸分析："><span class="nav-number">1.1.</span> <span class="nav-text">TP 无触摸分析：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#软件方面："><span class="nav-number">1.2.</span> <span class="nav-text">软件方面：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#硬件方面："><span class="nav-number">1.3.</span> <span class="nav-text">硬件方面：</span></a></li></ol></li></ol></div>
             
 
           </div>
