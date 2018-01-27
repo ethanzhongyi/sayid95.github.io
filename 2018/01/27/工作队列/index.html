@@ -79,24 +79,17 @@
 
 
 
-<meta name="description" content="流程module_init → i2c 注册 → 驱动注册 → 驱动初始化 → 设备的注册→ 上电(硬件初始化) → 固件下载(软件初始化) → 中断申请 → 结束 TP 无触摸分析： TP 无触摸的现象： 主要变现为触摸 TP 无反应，或者一部分区域无反应。  ​  TP 无触摸的分类 由于触摸 TP 无反应有很多原因，有可能是没有中断，也有可能是有中断但 是不能准确触摸，所以 TP 无反应主要">
+<meta name="description" content="为了执行时间尽量缩短和中断处理需要完成大量的工作之间找一个平衡点，Linux 将中断分为顶半部和底半部. 顶半部完成尽可能少的比较紧急的功能，它往往只是简单地读取寄存器中的中断状态并清除中断标志后进行“登记中断”的工作。“登记”意味着将底半部的处理程序挂载到该设备的底半部指向队列中去。 底半部作为工作重心，完成中断事件的绝大多数任务。 a. 底半部可以被新的中断事件打断，这是和顶半部最大的不同，顶">
 <meta property="og:type" content="article">
-<meta property="og:title" content="I2c设备-tp驱动分析（二）">
-<meta property="og:url" content="http://yoursite.com/2017/11/25/I2c设备-tp驱动分析二/index.html">
+<meta property="og:title" content="工作队列">
+<meta property="og:url" content="http://yoursite.com/2018/01/27/工作队列/index.html">
 <meta property="og:site_name" content="意 中 人">
-<meta property="og:description" content="流程module_init → i2c 注册 → 驱动注册 → 驱动初始化 → 设备的注册→ 上电(硬件初始化) → 固件下载(软件初始化) → 中断申请 → 结束 TP 无触摸分析： TP 无触摸的现象： 主要变现为触摸 TP 无反应，或者一部分区域无反应。  ​  TP 无触摸的分类 由于触摸 TP 无反应有很多原因，有可能是没有中断，也有可能是有中断但 是不能准确触摸，所以 TP 无反应主要">
+<meta property="og:description" content="为了执行时间尽量缩短和中断处理需要完成大量的工作之间找一个平衡点，Linux 将中断分为顶半部和底半部. 顶半部完成尽可能少的比较紧急的功能，它往往只是简单地读取寄存器中的中断状态并清除中断标志后进行“登记中断”的工作。“登记”意味着将底半部的处理程序挂载到该设备的底半部指向队列中去。 底半部作为工作重心，完成中断事件的绝大多数任务。 a. 底半部可以被新的中断事件打断，这是和顶半部最大的不同，顶">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oyrqypi8q.bkt.clouddn.com/17-11-25/8552954.jpg">
-<meta property="og:image" content="http://oyrqypi8q.bkt.clouddn.com/17-11-25/11142974.jpg">
-<meta property="og:image" content="http://oyrqypi8q.bkt.clouddn.com/17-11-25/43251264.jpg">
-<meta property="og:image" content="http://oyrqypi8q.bkt.clouddn.com/17-11-25/38609276.jpg">
-<meta property="og:image" content="http://oyrqypi8q.bkt.clouddn.com/17-11-25/31129126.jpg">
-<meta property="og:image" content="http://oyrqypi8q.bkt.clouddn.com/17-11-25/10431813.jpg">
-<meta property="og:updated_time" content="2017-11-25T09:38:24.000Z">
+<meta property="og:updated_time" content="2018-01-27T07:32:11.358Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="I2c设备-tp驱动分析（二）">
-<meta name="twitter:description" content="流程module_init → i2c 注册 → 驱动注册 → 驱动初始化 → 设备的注册→ 上电(硬件初始化) → 固件下载(软件初始化) → 中断申请 → 结束 TP 无触摸分析： TP 无触摸的现象： 主要变现为触摸 TP 无反应，或者一部分区域无反应。  ​  TP 无触摸的分类 由于触摸 TP 无反应有很多原因，有可能是没有中断，也有可能是有中断但 是不能准确触摸，所以 TP 无反应主要">
-<meta name="twitter:image" content="http://oyrqypi8q.bkt.clouddn.com/17-11-25/8552954.jpg">
+<meta name="twitter:title" content="工作队列">
+<meta name="twitter:description" content="为了执行时间尽量缩短和中断处理需要完成大量的工作之间找一个平衡点，Linux 将中断分为顶半部和底半部. 顶半部完成尽可能少的比较紧急的功能，它往往只是简单地读取寄存器中的中断状态并清除中断标志后进行“登记中断”的工作。“登记”意味着将底半部的处理程序挂载到该设备的底半部指向队列中去。 底半部作为工作重心，完成中断事件的绝大多数任务。 a. 底半部可以被新的中断事件打断，这是和顶半部最大的不同，顶">
 
 
 
@@ -126,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/11/25/I2c设备-tp驱动分析二/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/01/27/工作队列/"/>
 
 
 
 
 
-  <title>I2c设备-tp驱动分析（二） | 意 中 人</title>
+  <title>工作队列 | 意 中 人</title>
   
 
 
@@ -279,7 +272,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/25/I2c设备-tp驱动分析二/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/27/工作队列/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Sayid Zhong">
@@ -296,7 +289,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">I2c设备-tp驱动分析（二）</h1>
+          <h1 class="post-title" itemprop="name headline">工作队列</h1>
         
 
         <div class="post-meta">
@@ -308,8 +301,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-25T16:12:34+08:00">
-                2017-11-25
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-27T15:32:11+08:00">
+                2018-01-27
               </time>
             
 
@@ -326,7 +319,7 @@
 
           
           
-             <span id="/2017/11/25/I2c设备-tp驱动分析二/" class="leancloud_visitors" data-flag-title="I2c设备-tp驱动分析（二）">
+             <span id="/2018/01/27/工作队列/" class="leancloud_visitors" data-flag-title="工作队列">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -357,47 +350,34 @@
       
 
       
-        <h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><p>module_init → i2c 注册 → 驱动注册 → 驱动初始化 → 设备的注册→ 上电(硬件初始化) → 固件下载(软件初始化) → 中断申请 → 结束</p>
-<h3 id="TP-无触摸分析："><a href="#TP-无触摸分析：" class="headerlink" title="TP 无触摸分析："></a>TP 无触摸分析：</h3><ol>
-<li><p>TP 无触摸的现象： 主要变现为触摸 TP 无反应，或者一部分区域无反应。 </p>
-<p>​</p>
-</li>
-<li><p>TP 无触摸的分类 由于触摸 TP 无反应有很多原因，有可能是没有中断，也有可能是有中断但 是不能准确触摸，所以 TP 无反应主要分为两种：</p>
-</li>
-</ol>
-<p>1、有中断性质；2、无中断性质；</p>
-<ol>
-<li>TP 无触摸的确认 TP 无触摸的可以通过 adb信息查看：1、adb shell cat proc/kmsg2、adb shell getevent</li>
-<li>导致没有中断的原因</li>
-</ol>
-<p>软件方面的原因:</p>
+        <p>为了执行时间尽量缩短和中断处理需要完成大量的工作之间找一个平衡点，Linux 将中断分为顶半部和底半部.</p>
+<p>顶半部完成尽可能少的比较紧急的功能，它往往只是简单地读取寄存器中的中断状态并清除中断标志后进行“登记中断”的工作。“登记”意味着将底半部的处理程序挂载到该设备的底半部指向队列中去。</p>
+<p>底半部作为工作重心，完成中断事件的绝大多数任务。</p>
+<p>a. 底半部可以被新的中断事件打断，这是和顶半部最大的不同，顶半部通常被设计成不可被打断</p>
+<p>b. 底半部相对来说不是非常紧急的，而且相对比较耗时，不在硬件中断服务程序中执行。</p>
+<p>c. 如果中断要处理的工作本身很少，所有的工作可在顶半部全部完成</p>
+<p>在Linux内核中，对下半部（或者说推后执行的工作）的处理方式有好几种，包括软中断，Tasklets和工作队列等等。工作队列的方便之处在于它把 工作推后，交由一个内核线程去执行，这个内核线程总会在进程上下文执行，因此，它就可以很方便的持有信号量（semaphore），当然也可以允许睡眠。</p>
+<p>内核对工作队列的处理是通过工作者线程完成的。工作者线程在一般情况下处于睡眠状态，当我们把需要推迟执行的工作注册到工作队列中之后，唤醒工作者线程会 遍历工作队列中的每个待处理的工作，并执行工作队列结构work_struct中的func函数。</p>
+<p>这里涉及到两个概念：工作者线程和工作队列。首先看看我 们最关心的工作队列。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">work_struct</span> *<span class="title">delayed_work</span>;</span></span><br><span class="line">      INIT_WORK(delayed_work, delayed_work_handler, data);</span><br><span class="line">      schedule_work(delayed_work);</span><br></pre></td></tr></table></figure>
+<p>delayed_work是我们声明的工作队列；通过INIT_WORK对工作队列进行初始化，delayed_work_handler是工作队列的处 理函数，data是传递给处理函数的参数；</p>
+<p>最后调用schedule_work唤醒工作者线程处理推后执行的工作。如果需要经过一段延迟以后再执行工作， 可以调用：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">schedule_delayed_work(delayed_work, delay);   </span><br><span class="line"><span class="comment">//delay 是需要延迟的节拍数</span></span><br><span class="line">      另外还有一种静态创建工作队列的方式：</span><br><span class="line">      DECLARE_WORK(name, <span class="keyword">void</span> (*func) (<span class="keyword">void</span> *), <span class="keyword">void</span> *data);</span><br></pre></td></tr></table></figure>
+<p>大部分情况下我们了解到这里已经足够了。工作者线程可以放心的交给内核去完成。对于工作者线程的使用有两种方式，一是直接使用内核中每个CPU对应的一个 缺省工作者线程envents/n（n代表CPU的序号，从0开始）；再者就是自己创建一个专用的工作者线程。对于通常情况下，驱动开发者是不必关心工作 者线程的，缺省的工作者线程能够做的很好。如果缺省的队列不能满足要求，自己创建一个工作者线程也很简单，只需要调用：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">struct workqueue_struct *<span class="title">create_workqueue</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *name)</span></span>;</span><br><span class="line">      调度时使用如下函数：</span><br><span class="line">      <span class="function"><span class="keyword">int</span> <span class="title">queue_work</span><span class="params">(struct workqueue_struct *wq, struct work_struct *work)</span></span>;</span><br><span class="line">      或</span><br><span class="line">      <span class="function"><span class="keyword">int</span> <span class="title">queue_delayed_work</span><span class="params">(struct workqueue_struct *wq, struct work_struct</span></span></span><br><span class="line"><span class="function"><span class="params">      *work, <span class="keyword">unsigned</span> <span class="keyword">long</span> delay)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>下面分析一个工作中遇到的重启问题：插入typec-OTG时会重启（使用的是BQ的OTG功能），下面分析代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">typec_drive_vbus_work</span><span class="params">(struct work_struct *work)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">typec_hba</span> *<span class="title">hba</span> = <span class="title">container_of</span>(<span class="title">work</span>, <span class="title">struct</span> <span class="title">typec_hba</span>, <span class="title">drive_vbus_work</span>);</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">musb</span> *<span class="title">musb2</span>;</span></span><br><span class="line">	</span><br><span class="line">	<span class="keyword">if</span> (hba-&gt;vbus_en)&#123;</span><br><span class="line">      <span class="comment">//插入OTG时会进入这里</span></span><br><span class="line">		tbl_charger_otg_vbus(<span class="number">1</span>); <span class="comment">//这个函数去调用 BQ充电IC 的函数，去写BQ的寄存器为OTG模式</span></span><br><span class="line">		pinctrl_select_state(hba-&gt;pinctrl, hba-&gt;typec_drvvbus_high);<span class="comment">//pull high drvvbus i/o</span></span><br><span class="line">		printk(<span class="string">"[vbus]typec_drvvbus_high"</span>);		</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span>&#123;		</span><br><span class="line">      <span class="comment">//拔出OTG时会进入这里</span></span><br><span class="line">		tbl_charger_otg_vbus(<span class="number">0</span>);</span><br><span class="line">		pinctrl_select_state(hba-&gt;pinctrl, hba-&gt;typec_drvvbus_low);	<span class="comment">//pull down drvvbus i/o	</span></span><br><span class="line">		printk(<span class="string">"[vbus]typec_drvvbus_low"</span>);		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	typec_sw_probe(hba, DBG_VBUS_EN, (hba-&gt;vbus_en &lt;&lt; DBG_VBUS_EN_OFST));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>打开tbl_charger_otg_vbus 函数就会重启，为什么会这样呢？</p>
+<p>分析可能是在 typec_init 的时候就会调用BQ charge函数(typec_drive_vbus_work)，<code>INIT_WORK(&amp;hba-&gt;drive_vbus_work, typec_drive_vbus_work);</code>  ,可能此时BQ charge还未准备好，导致的重启。</p>
+<p>而在原先usb里面，usb在init的时候 有一个几秒的delay，再调用此函数。</p>
+<p>现在在typec driver init的时候也加个delay ，再调用charger driver(typec_drive_vbus_work) 试试。</p>
 <ul>
-<li>① 中断的模式，中断引脚是否正确 —– 中断引脚一般出现问题的 概率性很大</li>
-<li>② TP 的固件是否正确 —- 即.h 有没有下载正确，主要的办法就是将 (3.0)里的数据打印出来跟正确测试 OK 的.h 对比来判断。 </li>
+<li><code>struct work_struct drive_vbus_work;</code>  申明结构体换成 <code>struct delayed_work drive_vbus_work;</code></li>
+<li>初始化工作队列换成 <code>INIT_DELAYED_WORK(&amp;hba-&gt;drive_vbus_work, typec_drive_vbus_work);</code></li>
+<li><code>schedule_work(&amp;hba-&gt;drive_vbus_work);</code> 换成 <code>schedule_work(&amp;hba-&gt;drive_vbus_work);</code> 如下</li>
 </ul>
-<ul>
-<li>③ I2C 是否能正常通讯 —- 没有中断很多原因都是 i2c 不通导致，所 以优先考虑</li>
-</ul>
-<ol>
-<li>I2C 不通：如何判断驱动 i2c 是否通讯成功？</li>
-</ol>
-<ul>
-<li><p>1、硬件方面：用示波器查看波形，测试每个 GPIO 的电压。 1/每个 GPIO 的电压:VCC 电压 2.8V—-3.3V，SDA,SCL 电压 1.8V 或 2.8V，主要是指芯片的 VDDIO 的电压。RST 电压 1.8V 或者 2.8V IRQ 电压 1.8V 或者 2.8V2/ 通过示波器查看 SDA 跟 SCL 的波形</p>
-</li>
-<li><p>2、软件方面：通过读写某些的寄存器，读写的方法主要有两种： 1/ 读 0xfc 或者 0xb0 的值。 2/ 向某个寄存器写入一个数据，然后再将该地址里的数据读出来， 对比读前后两个数据是否相同。</p>
-</li>
-</ul>
-<h3 id="软件方面："><a href="#软件方面：" class="headerlink" title="软件方面："></a>软件方面：</h3><ul>
-<li>1、检查 i2c 是否注册成功 ls   sys/bus/i2c/devices/主要是通过 adb shell 来查看，在 sys/bus/i2c/devices/下有没有 1-0040 或 者 0-0040 这个地址，并且在该目录下有我们 i2c 设备的相关信息, if no 则说明i2c 没有注册成功</li>
-<li>2、GPIO 的配置   i2c 总线的配置</li>
-</ul>
-<h3 id="硬件方面："><a href="#硬件方面：" class="headerlink" title="硬件方面："></a>硬件方面：</h3><p>主要考虑每个 GPIO 的电压 通过万用表可以测试开机后 IC 每个引脚的电压，主要就是 VCC、SDA、 SCL、RST 的电压。这里重点测试 VCC 电压跟 SDA、SCL 电压是否达到要求。</p>
-<p><img src="http://oyrqypi8q.bkt.clouddn.com/17-11-25/8552954.jpg" alt="1"></p>
-<p><img src="http://oyrqypi8q.bkt.clouddn.com/17-11-25/11142974.jpg" alt="2"></p>
-<p><img src="http://oyrqypi8q.bkt.clouddn.com/17-11-25/43251264.jpg" alt="3"></p>
-<p><img src="http://oyrqypi8q.bkt.clouddn.com/17-11-25/38609276.jpg" alt="4"></p>
-<p><img src="http://oyrqypi8q.bkt.clouddn.com/17-11-25/31129126.jpg" alt="5"></p>
-<p><img src="http://oyrqypi8q.bkt.clouddn.com/17-11-25/10431813.jpg" alt="6"></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> b_typec_init = <span class="literal">false</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">typec_drive_vbus</span><span class="params">(struct typec_hba *hba, <span class="keyword">uint8_t</span> on)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">hba-&gt;vbus_en = on;</span><br><span class="line"><span class="comment">// schedule_work(&amp;hba-&gt;drive_vbus_work);</span></span><br><span class="line"> <span class="keyword">if</span> (!b_typec_init) &#123;</span><br><span class="line"> schedule_delayed_work(&amp;hba-&gt;drive_vbus_work,<span class="number">7000</span> * HZ / <span class="number">1000</span>);</span><br><span class="line">   <span class="comment">//唤醒工作者线程处理推后执行的工作,delay一段时间再执行</span></span><br><span class="line"> b_typec_init = <span class="literal">true</span>;</span><br><span class="line"> &#125; <span class="keyword">else</span></span><br><span class="line"> schedule_delayed_work(&amp;hba-&gt;drive_vbus_work,<span class="number">400</span> * HZ / <span class="number">1000</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>延迟执行 <code>typec_drive_vbus_work</code> 函数后不会再重启了。</p>
 
       
     </div>
@@ -446,8 +426,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/11/25/I2c设备-tp驱动分析/" rel="next" title="I2c设备-tp 驱动分析（一）">
-                <i class="fa fa-chevron-left"></i> I2c设备-tp 驱动分析（一）
+              <a href="/2018/01/27/hello-world/" rel="next" title="Hello World">
+                <i class="fa fa-chevron-left"></i> Hello World
               </a>
             
           </div>
@@ -455,10 +435,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/01/27/hello-world/" rel="prev" title="Hello World">
-                Hello World <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -510,17 +486,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -591,22 +558,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#流程"><span class="nav-number">1.</span> <span class="nav-text">流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TP-无触摸分析："><span class="nav-number">1.1.</span> <span class="nav-text">TP 无触摸分析：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#软件方面："><span class="nav-number">1.2.</span> <span class="nav-text">软件方面：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#硬件方面："><span class="nav-number">1.3.</span> <span class="nav-text">硬件方面：</span></a></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       

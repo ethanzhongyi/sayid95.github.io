@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="意 中 人">
 <meta property="og:description" content="凡事过去，皆为序幕   hexo 踩过的一些坑做技术还是要写点东西的，俗话说得好好记性不如烂笔头， 以前都是写在印象笔记上的，后来发现一个问题，笔记上的东西太多， 写的时候不会那么认真，毕竟只是自己看到，二来查找不太好用。 blogs 上还是会仔细写的，因为看的人不止是自己了，再者可以给需要的人一点思路。 hexo博客的搭建等问题可以 看官网，我就不去赘述了  一  部署问题  hexo博客系">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-15T10:32:47.165Z">
+<meta property="og:updated_time" content="2017-12-15T10:32:48.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="hexo 踩过的坑">
 <meta name="twitter:description" content="凡事过去，皆为序幕   hexo 踩过的一些坑做技术还是要写点东西的，俗话说得好好记性不如烂笔头， 以前都是写在印象笔记上的，后来发现一个问题，笔记上的东西太多， 写的时候不会那么认真，毕竟只是自己看到，二来查找不太好用。 blogs 上还是会仔细写的，因为看的人不止是自己了，再者可以给需要的人一点思路。 hexo博客的搭建等问题可以 看官网，我就不去赘述了  一  部署问题  hexo博客系">
@@ -359,18 +359,18 @@
 <p>以前都是写在印象笔记上的，后来发现一个问题，笔记上的东西太多，</p>
 <p>写的时候不会那么认真，毕竟只是自己看到，二来查找不太好用。</p>
 <p>blogs 上还是会仔细写的，因为看的人不止是自己了，再者可以给需要的人一点思路。</p>
-<p>hexo博客的搭建等问题可以 <a href="https://hexo.io/zh-cn/" target="_blank" rel="external">看官网</a>，我就不去赘述了</p>
+<p>hexo博客的搭建等问题可以 <a href="https://hexo.io/zh-cn/" target="_blank" rel="noopener">看官网</a>，我就不去赘述了</p>
 <ul>
 <li>一  部署问题</li>
 </ul>
 <p>hexo博客系统是挂载在GitHub上的，so需要在配置里面去部署</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># Deployment</div><div class="line">## Docs: https:<span class="comment">//hexo.io/docs/deployment.html</span></div><div class="line">deploy:</div><div class="line">  type: git</div><div class="line">  repo: git@github.com:sayid95/sayid95.github.io.git   <span class="comment">/*这是一个坑  仓库一定是git@ 开头的*/</span></div><div class="line">  branch: master</div></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># Deployment</span><br><span class="line">## Docs: https:<span class="comment">//hexo.io/docs/deployment.html</span></span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: git@github.com:sayid95/sayid95.github.io.git   <span class="comment">/*这是一个坑  仓库一定是git@ 开头的*/</span></span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
 <ul>
 <li>二  配置问题  </li>
 </ul>
-<p>搭建好了以后我们也会不断去_config.yml 文件里配置一些东西，当然不小心就会出错的，error当然也不好找，用这个把_config.yml 配置复制到<a href="https://codebeautify.org/yaml-validator" target="_blank" rel="external">这里</a>去检测配置上的错误</p>
+<p>搭建好了以后我们也会不断去_config.yml 文件里配置一些东西，当然不小心就会出错的，error当然也不好找，用这个把_config.yml 配置复制到<a href="https://codebeautify.org/yaml-validator" target="_blank" rel="noopener">这里</a>去检测配置上的错误</p>
 <ul>
-<li>三  报错 Cannot find module ‘hexo-util’<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"> ERROR Script load failed: themes\next\scripts\tags\exturl.js</div><div class="line">Error: Cannot find module &apos;hexo-util&apos;</div></pre></td></tr></table></figure>
+<li>三  报错 Cannot find module ‘hexo-util’<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> ERROR Script load failed: themes\next\scripts\tags\exturl.js</span><br><span class="line">Error: Cannot find module &apos;hexo-util&apos;</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 <p>我们可以输入命令  npm install – save-dev hexo-util</p>
@@ -515,7 +515,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">10</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
