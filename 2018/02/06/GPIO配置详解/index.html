@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="mtk dct," />
 
 
 
@@ -79,17 +79,21 @@
 
 
 
-<meta name="description" content="种一棵树最好的时间是10年前，其次就是现在！">
+<meta name="description" content="Linux4.4以前dct路径：  /vendor/mediatek/proprietary/bootable/bootloader/lk/scripts/dct/old_dct/DrvGen.exe Linux4.4的dct路径：\vendor\mediatek\proprietary\scripts\dct\DrvGen.exe dws文件在preload，lk,kernel下面都有，分别">
+<meta name="keywords" content="mtk dct">
 <meta property="og:type" content="article">
 <meta property="og:title" content="GPIO配置详解">
 <meta property="og:url" content="http://yoursite.com/2018/02/06/GPIO配置详解/index.html">
 <meta property="og:site_name" content="意 中 人">
-<meta property="og:description" content="种一棵树最好的时间是10年前，其次就是现在！">
+<meta property="og:description" content="Linux4.4以前dct路径：  /vendor/mediatek/proprietary/bootable/bootloader/lk/scripts/dct/old_dct/DrvGen.exe Linux4.4的dct路径：\vendor\mediatek\proprietary\scripts\dct\DrvGen.exe dws文件在preload，lk,kernel下面都有，分别">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-02-06T02:04:11.030Z">
+<meta property="og:image" content="http://oyrqypi8q.bkt.clouddn.com/18-2-6/47646254.jpg">
+<meta property="og:image" content="http://oyrqypi8q.bkt.clouddn.com/18-2-6/9135370.jpg">
+<meta property="og:updated_time" content="2018-02-07T01:57:40.966Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GPIO配置详解">
-<meta name="twitter:description" content="种一棵树最好的时间是10年前，其次就是现在！">
+<meta name="twitter:description" content="Linux4.4以前dct路径：  /vendor/mediatek/proprietary/bootable/bootloader/lk/scripts/dct/old_dct/DrvGen.exe Linux4.4的dct路径：\vendor\mediatek\proprietary\scripts\dct\DrvGen.exe dws文件在preload，lk,kernel下面都有，分别">
+<meta name="twitter:image" content="http://oyrqypi8q.bkt.clouddn.com/18-2-6/47646254.jpg">
 
 
 
@@ -350,7 +354,18 @@
       
 
       
-        
+        <p><img src="http://oyrqypi8q.bkt.clouddn.com/18-2-6/47646254.jpg" alt="GPIO配置"></p>
+<p><img src="http://oyrqypi8q.bkt.clouddn.com/18-2-6/9135370.jpg" alt=""></p>
+<p>Linux4.4以前dct路径：  /vendor/mediatek/proprietary/bootable/bootloader/lk/scripts/dct/old_dct/DrvGen.exe</p>
+<p>Linux4.4的dct路径：\vendor\mediatek\proprietary\scripts\dct\DrvGen.exe</p>
+<p>dws文件在preload，lk,kernel下面都有，分别在不同阶段去初始化gpio，一般修改lk的即可，最好三个都修改。</p>
+<p>EintMode: 指示是否当作中断引脚来使用，例如GPIO0就可以当作ENTI0，如果选中了该模式，其它模式是不可见的。</p>
+<p>Def.Mode: GPIO默认的模式，什么意思呢，就是在系统启动过程中GPIO口的模式，GPIO口启动模式是定义在文件cust_gpio_boot.h文件中的(linux4.4以后就没有这些头文件生成)，例如，GPIO3的启动模式就是作为普通的GPIO口来使用，即模式为GPIO_MODE_00.</p>
+<p>M0~M7: 由于GPIO口是复用的，也就说除了作为普通的GPIO口使用之外，还有其它用途，所以这里会在cust_gpio_usage.h文件中产生一些宏定义，可能某些驱动中会用到这些宏定义。</p>
+<p>InPull En: 是指GPIO是否使能上拉或下拉。</p>
+<p>InPull SelHigh: 上面只是只是指示是否使能上拉或下拉，但是并没有指出到底是上拉还是下拉，那么就由这里来指定，如果勾选了那么就表示上拉，否则就是下拉。</p>
+<p>Def.Dir: 指示GPIO默认的数据传输方向，是输入还是<strong>输出</strong>，都需要设置的。</p>
+
       
     </div>
     
@@ -388,6 +403,12 @@
     
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/mtk-dct/" rel="tag"># mtk dct</a>
+          
+        </div>
       
 
       
@@ -491,7 +512,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
